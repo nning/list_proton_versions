@@ -3,7 +3,6 @@ package steam
 import (
 	"errors"
 	"fmt"
-	"io/ioutil"
 	"os"
 	"path"
 	"regexp"
@@ -63,34 +62,42 @@ func (s *Steam) userToID32(u string) (string, error) {
 func (s *Steam) getUID(u string) (string, error) {
 	dir := path.Join(s.Root, "userdata")
 	// TODO Sort entries by last change?
-	entries, err := ioutil.ReadDir(dir)
+	entries, err := os.ReadDir(dir)
 	if err != nil {
 		return "", err
 	}
 
 	uid := entries[0].Name()
 
-	if len(entries) > 1 {
-		users := make([]string, 0)
+	if len(entries) <= 1 {
+		return uid, nil
+	}
 
-		for _, entry := range entries {
-			name := entry.Name()
-			if name == u {
-				return name, nil
-			}
+	users := make([]string, 0)
 
-			isEntryNumeric, err := regexp.MatchString("^[0-9]*$", name)
-			if err != nil {
-				return "", err
-			}
-
-			if name != "0" && isEntryNumeric {
-				users = append(users, name)
-			}
+	for _, entry := range entries {
+		name := entry.Name()
+		if name == u {
+			return name, nil
 		}
 
-		uid = users[0]
+		isEntryNumeric, err := regexp.MatchString("^[0-9]*$", name)
+		if err != nil {
+			return "", err
+		}
 
+		if name != "0" && isEntryNumeric {
+			users = append(users, name)
+		}
+	}
+
+	if len(users) == 0 {
+		return "", errors.New("No user found")
+	}
+
+	uid = users[0]
+
+	if len(users) > 1 {
 		fmt.Fprintln(os.Stderr,
 			"Warning: Several Steam users available, using "+uid+"\n"+
 				"All available users: "+strings.Join(users, ", ")+"\n"+

@@ -93,7 +93,7 @@ func New(user string, cfg *config.Config, ignoreCache bool) (*Steam, error) {
 		return nil, err
 	}
 
-	log.Debug("steam.New(", user, "[", s.UID, "], ", root, ", ", ignoreCache, ")")
+	log.Debug("steam.New(", user, "[", s.UID, "], ", root, ", cache=", !ignoreCache, ", enableViewedSteamPlay=", s.EnableViewedSteamPlay, ")")
 
 	err = s.initConfigs()
 	if err != nil {

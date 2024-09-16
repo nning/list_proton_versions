@@ -13,8 +13,9 @@ type LocalConfigVdf struct {
 	Vdf
 }
 
-// GetGames returns a slice of games for which the user confirmed the
-// Steam Play disclaimer
+// GetGames returns a slice of gamesr read from localconfig.vdf.
+// The `enableViewedSteamPlay` argument controls whether the slice only contains
+// games for which the user confirmed the Steam Play disclaimer
 func (v *LocalConfigVdf) GetGames(enableViewedSteamPlay bool) ([]*Game, error) {
 	log.Debug("LocalConfigVdf.GetGames()")
 

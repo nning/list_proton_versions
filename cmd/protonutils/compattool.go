@@ -3,7 +3,6 @@ package main
 import (
 	"errors"
 	"fmt"
-	"io/ioutil"
 	"os"
 	"path"
 	"strings"
@@ -276,7 +275,7 @@ func compatToolClean(cmd *cobra.Command, args []string) {
 	}
 
 	dir := getCompatDir(s)
-	files, err := ioutil.ReadDir(dir)
+	files, err := os.ReadDir(dir)
 	exitOnError(err)
 
 	newToDelete := toDelete.Clone()
